@@ -1,0 +1,291 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GlowCare Store</title>  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+
+    body { background: #fdf2f8; color: #333; }
+
+    header {
+      background: #be185d;
+      color: white;
+      padding: 22px;
+      text-align: center;
+      font-size: 26px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .controls {
+      max-width: 1200px;
+      margin: 20px auto 0;
+      padding: 0 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .search {
+      flex: 1;
+      min-width: 200px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+    }
+
+    .categories {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .cat-btn {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: none;
+      background: #fbcfe8;
+      cursor: pointer;
+      font-size: 13px;
+      transition: 0.2s;
+    }
+
+    .cat-btn.active,
+    .cat-btn:hover {
+      background: #be185d;
+      color: white;
+    }
+
+    .container { max-width: 1200px; margin: auto; padding: 30px 20px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 22px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      transition: 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+
+    .card img { width: 100%; height: 200px; object-fit: cover; }
+
+    .card-content {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+    }
+
+    .title { font-size: 17px; font-weight: bold; margin-bottom: 6px; }
+
+    .price { font-size: 19px; color: #be185d; font-weight: bold; margin: 8px 0; }
+
+    .btn {
+      padding: 11px;
+      border: none;
+      border-radius: 10px;
+      background: #be185d;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .btn:hover { background: #9d174d; }
+
+    .busy { background: #9ca3af !important; cursor: not-allowed; }
+
+    footer {
+      text-align: center;
+      padding: 18px;
+      background: #be185d;
+      color: white;
+      margin-top: 40px;
+      font-size: 14px;
+    }
+  </style></head><body>
+  <header>GlowCare Store</header>  <div class="controls">
+    <input
+      type="text"
+      id="searchInput"
+      class="search"
+      placeholder="Search products..."
+    /><div class="categories" id="categoryButtons"></div>
+
+  </div>  <div class="container">
+    <div class="grid" id="productGrid"></div>
+  </div>  <footer>© 2026 GlowCare. All rights reserved.</footer>  <script>
+    const products = [
+      { name: "Aloe Vera Face Wash", price: 199, image: "M1.jpeg", busy: false, category: "Skin Care" },
+      { name: "Vitamin C Serum", price: 499, image: "M2.jpeg", busy: false, category: "Skin Care" },
+      { name: "Hydrating Moisturizer", price: 299, image: "M3.jpeg", busy: false, category: "Skin Care" },
+      { name: "Rose water", price: 299, image: "M4.jpeg", busy: false, category: "Skin Care" },
+      { name: "Serum", price: 299, image: "M5.jpeg", busy: false, category: "Skin Care" },
+      { name: "Sunscreen", price: 299, image: "M6.jpeg", busy: false, category: "Skin Care" },
+      { name: "Scrub", price: 299, image: "M7.jpeg", busy: false, category: "Skin Care" },
+      { name: "toner", price: 299, image: "M8.jpeg", busy: false, category: "Skin Care" },
+      { name: "night cream", price: 299, image: "M9.jpeg", busy: false, category: "Skin Care" },
+      { name: "BB cream", price: 299, image: "M10.jpeg", busy: false, category: "Skin Care" },
+      { name: "face mask", price: 299, image: "M11.jpeg", busy: false, category: "Skin Care" },
+      { name: "makeup remover", price: 299, image: "M12.jpeg", busy: false, category: "Skin Care" },
+
+
+      { name: "Lipstick Matte", price: 299, image: "S1.jpeg", busy: false, category: "Makeup" },
+      { name: "Liquid Foundation", price: 599, image: "S2.jpeg", busy: false, category: "Makeup" },
+      { name: "Compact Powder", price: 249, image: "S3.jpeg", busy: false, category: "Makeup" },
+      { name: "primer", price: 249, image: "S4.jpeg", busy: false, category: "Makeup" },
+      { name: "Eyeliner", price: 249, image: "S5.jpeg", busy: false, category: "Makeup" },
+      { name: "Highlighter", price: 249, image: "S6.jpeg", busy: false, category: "Makeup" },
+      { name: "Mascara", price: 249, image: "S7.jpeg", busy: false, category: "Makeup" },
+      { name: "Nail polish", price: 249, image: "S8.jpeg", busy: false, category: "Makeup" },
+      { name: "Concealer", price: 249, image: "S9.jpeg", busy: false, category: "Makeup" },
+      { name: "Eye shadow", price: 249, image: "S10.jpeg", busy: false, category: "Makeup" },
+
+
+      { name: "Women T-Shirt", price: 699, image: "C1.jpeg", busy: false, category: "Clothes" },
+      { name: "Denim Jacket", price: 1499, image: "C2.jpeg", busy: false, category: "Clothes" },
+      { name: "Casual Dress", price: 1199, image: "C3.jpeg", busy: false, category: "Clothes" },
+      { name: "Blazer", price: 1199, image: "C4.jpeg", busy: false, category: "Clothes" },
+      { name: "codeset", price: 1199, image: "C5.jpeg", busy: false, category: "Clothes" },
+      { name: "saree", price: 1199, image: "C6.jpeg", busy: false, category: "Clothes" },
+      { name: "Skirt", price: 1199, image: "C7.jpeg", busy: false, category: "Clothes" },
+      { name: "jeans", price: 1199, image: "C8.jpeg", busy: false, category: "Clothes" },
+      { name: "kurti", price: 1199, image: "C9.jpeg", busy: false, category: "Clothes" },
+      { name: "long dress", price: 1199, image: "C10.jpeg", busy: false, category: "Clothes" },
+      { name: "wedding gown", price: 1199, image: "C11.jpeg", busy: false, category: "Clothes" },
+      { name: "formal coat", price: 1199, image: "C12.jpeg", busy: false, category: "Clothes" },
+    ];
+
+    const categories = ["All", "Skin Care", "Makeup", "Clothes"];
+
+    const grid = document.getElementById("productGrid");
+    const searchInput = document.getElementById("searchInput");
+    const categoryButtons = document.getElementById("categoryButtons");
+
+    let selectedCategory = "All";
+
+    function createCard(product) {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const buttonText = product.busy ? "Busy Now" : "Buy Now";
+      const buttonClass = product.busy ? "btn busy" : "btn";
+
+      card.innerHTML = `
+        <img src="${product.image}" alt="${product.name}" />
+        <div class="card-content">
+          <div>
+            <div class="title">${product.name}</div>
+            <div class="price">₹${product.price}</div>
+          </div>
+          <button class="${buttonClass}" ${product.busy ? "disabled" : ""}>${buttonText}</button>
+        </div>
+      `;
+
+      if (!product.busy) {
+        card.querySelector("button").addEventListener("click", () => {
+          alert(`${product.name} added to cart!`);
+        });
+      }
+
+      return card;
+    }
+
+    function renderProducts() {
+      const searchText = searchInput.value.toLowerCase();
+
+      grid.innerHTML = "";
+
+      const filtered = products.filter(p => {
+        const matchCategory = selectedCategory === "All" || p.category === selectedCategory;
+        const matchSearch = p.name.toLowerCase().includes(searchText);
+        return matchCategory && matchSearch;
+      });
+
+      filtered.forEach(p => grid.appendChild(createCard(p)));
+    }
+
+    function renderCategories() {
+      categories.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.textContent = cat;
+        btn.className = "cat-btn" + (cat === "All" ? " active" : "");
+
+        btn.addEventListener("click", () => {
+          selectedCategory = cat;
+
+          document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+
+          renderProducts();
+        });
+
+        categoryButtons.appendChild(btn);
+      });
+    }
+
+    searchInput.addEventListener("input", renderProducts);
+
+    renderCategories();
+    renderProducts();
+  
+    const wishlist = new Set();
+
+    function toggleWishlist(productName, icon) {
+      if (wishlist.has(productName)) {
+        wishlist.delete(productName);
+        icon.textContent = "♡";
+      } else {
+        wishlist.add(productName);
+        icon.textContent = "♥";
+      }
+    }
+
+    // Override createCard to include wishlist button
+    const originalCreateCard = createCard;
+    createCard = function(product) {
+      const card = originalCreateCard(product);
+
+      const heart = document.createElement("button");
+      heart.textContent = wishlist.has(product.name) ? "♥" : "♡";
+      heart.style.position = "absolute";
+      heart.style.top = "10px";
+      heart.style.right = "10px";
+      heart.style.background = "white";
+      heart.style.border = "none";
+      heart.style.borderRadius = "50%";
+      heart.style.width = "32px";
+      heart.style.height = "32px";
+      heart.style.cursor = "pointer";
+      heart.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
+      heart.style.fontSize = "16px";
+
+      heart.addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleWishlist(product.name, heart);
+      });
+
+      card.style.position = "relative";
+      card.appendChild(heart);
+
+      return card;
+    };
+
+  </script></body>
+</html>
